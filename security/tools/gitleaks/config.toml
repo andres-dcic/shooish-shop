@@ -1,0 +1,18 @@
+title = "Shooish Shop Workshop Gitleaks Rules"
+
+[[rules]]
+id = "shoosh-shop-demo-secret"
+description = "Intentional workshop secret in Shooish Shop"
+regex = '''(?i)(shooshop-dev-secret|super-secret-key-123)'''
+keywords = ["shooshop-dev-secret", "super-secret-key-123"]
+secretGroup = 0
+entropy = 0
+
+[allowlist]
+description = "Allow documentation and secure app references to the intentional secret."
+paths = [
+  '''(?i).*student/.*''',
+  '''(?i).*instructor/.*''',
+  '''(?i).*security/README\.md''',
+  '''(?i).*app_secure/__init__\.py'''
+]

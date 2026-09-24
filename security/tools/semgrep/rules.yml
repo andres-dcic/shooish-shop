@@ -1,0 +1,27 @@
+rules:
+  - id: shooshop-insecure-sql
+    languages: [python]
+    message: "Possible SQL injection: SQL query uses string interpolation."
+    severity: ERROR
+    patterns:
+      - pattern-either:
+          - pattern: $CON.execute(f"...")
+          - pattern: $VAR = f"SELECT..."
+          - pattern: $VAR = f"... WHERE ..."
+          - pattern: $STR = f"SELECT * FROM users WHERE username = '{$USER}' AND password = '{$PASS}'"
+
+  - id: shooshop-hardcoded-secret
+    languages: [python]
+    message: "Hard-coded Flask secret."
+    severity: WARNING
+    pattern: $APP.secret_key = "..."
+
+  - id: shooshop-xss-unescaped
+    languages: [python]
+    message: "Potential XSS: user input used in HTML template without escaping."
+    severity: ERROR
+    patterns:
+      - pattern-either:
+          - pattern: return page(f"...<{...}>...")
+          - pattern: f"""...<p>{$TERM}</p>..."""
+          - pattern: f'''...<p>{$TERM}</p>...'''
