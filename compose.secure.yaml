@@ -1,0 +1,14 @@
+services:
+  shoosh-shop-secure:
+    build:
+      context: .
+      dockerfile: Dockerfile.secure
+    container_name: shoosh-shop-secure
+    ports:
+      - "5001:5000"
+    restart: unless-stopped
+    volumes:
+      - shop-secure-data:/app/app_secure
+
+volumes:
+  shop-secure-data:

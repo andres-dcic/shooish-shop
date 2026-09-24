@@ -1,0 +1,30 @@
+services:
+  # LocalStack: Simulador de AWS (S3 + DynamoDB)
+  localstack:
+    image: localstack/localstack:2.3.0
+    container_name: shooish-shop-localstack
+    ports:
+      - "4566:4566"
+    environment:
+      SERVICES: s3,dynamodb
+      DEBUG: 0
+      AWS_ACCESS_KEY_ID: test
+      AWS_SECRET_ACCESS_KEY: test
+      AWS_DEFAULT_REGION: us-east-1
+      LOCALSTACK_HOSTNAME: localstack
+
+    volumes:
+      - ./localstack/data:/tmp/localstack
+
+    networks:
+      - shooish-shop-net
+
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:4566/_localstack/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+networks:
+  shooish-shop-net:
+    driver: bridge

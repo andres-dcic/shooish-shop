@@ -1,0 +1,31 @@
+.cache
+__pycache__/
+*.pyc
+.venv/
+.env
+app/shop.db
+
+#Security
+security/
+
+#Doc
+docs/
+
+#Scripts
+scripts/
+
+# Terraform
+terraform/
+terraform/.terraform/
+terraform/*.tfstate
+terraform/*.tfstate.*
+terraform/.terraform.lock.hcl
+app_secure/
+
+
+
+# Ignorar workflows de GitHub Actions
+.github/workflows/*
+
+# Permitir únicamente el workflow inicial
+!.github/workflows/basic-workflow.yml
