@@ -14,6 +14,9 @@ docs/
 #Scripts
 scripts/
 
+#Localstack
+localstack/
+
 # Terraform
 terraform/
 terraform/.terraform/
@@ -25,7 +28,8 @@ app_secure/
 
 
 # Ignorar workflows de GitHub Actions
+.github
 .github/workflows/*
 
 # Permitir únicamente el workflow inicial
-!.github/workflows/basic-workflow.yml
+#!.github/workflows/basic-workflow.yml
