@@ -6,7 +6,7 @@ __pycache__/
 app/shop.db
 
 #Security
-security/
+#security/
 
 #Doc
 docs/
@@ -18,12 +18,12 @@ scripts/
 localstack/
 
 # Terraform
-terraform/
+#terraform/
 terraform/.terraform/
 terraform/*.tfstate
 terraform/*.tfstate.*
 terraform/.terraform.lock.hcl
-app_secure/
+#app_secure/
 
 
 
@@ -32,4 +32,7 @@ app_secure/
 .github/workflows/*
 
 # Permitir únicamente el workflow inicial
-#!.github/workflows/basic-workflow.yml
+!.github/workflows/basic-workflow.yml
+
+# Presentacion
+presentacion/
