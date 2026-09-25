@@ -34,7 +34,7 @@ terraform/.terraform.lock.hcl
 # Permitir únicamente el workflow inicial
 !.github/workflows/basic-workflow.yml
 !.github/workflows/deploy-insecure.yml
-.github/workflows/deploy-secure.yml
+!.github/workflows/deploy-secure.yml
 
 # Presentacion
 presentacion/
