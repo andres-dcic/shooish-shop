@@ -28,11 +28,13 @@ terraform/.terraform.lock.hcl
 
 
 # Ignorar workflows de GitHub Actions
-.github
-.github/workflows/*
+#.github
+#.github/workflows/*
 
 # Permitir únicamente el workflow inicial
 !.github/workflows/basic-workflow.yml
+.github/workflows/deploy-insecure.yml
+.github/workflows/deploy-secure.yml
 
 # Presentacion
 presentacion/
