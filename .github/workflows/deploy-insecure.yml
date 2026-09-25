@@ -1,0 +1,109 @@
+name: Deploy Vulnerable App (sin validación de seguridad)
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+env:
+  REGISTRY: docker.io
+  IMAGE_NAME: shoosh-shop-vulnerable
+
+jobs:
+  gitleaks:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: 🔐 Gitleaks Secret Scanning (app/)
+        run: |
+          docker run --rm -v "${{ github.workspace }}:/repo:ro" -w /repo \
+            zricethezav/gitleaks:latest dir /repo/app --config=/repo/security/tools/gitleaks/config.toml --verbose
+        continue-on-error: true
+
+  semgrep:
+    needs: gitleaks
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: 🔍 Semgrep SAST Analysis (app/)
+        uses: semgrep/semgrep-action@v1
+        with:
+          config: security/tools/semgrep/rules.yml
+          generateSarif: true
+        continue-on-error: true
+
+  trivy:
+    needs: semgrep
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: 📦 Trivy Filesystem Scan (app/)
+        uses: aquasecurity/trivy-action@master
+        with:
+          scan-type: fs
+          scan-ref: app/
+          scanners: vuln,secret,misconfig
+          severity: CRITICAL,HIGH
+          ignore-unfixed: true
+          format: sarif
+          output: trivy-fs-results.sarif
+        continue-on-error: true
+
+      - name: 📊 Upload Scan Results
+        uses: github/codeql-action/upload-sarif@v2
+        if: always()
+        with:
+          sarif_file: 'trivy-*.sarif'
+        continue-on-error: true
+
+  deploy-vulnerable:
+    needs: trivy
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: 🚀 Desplegando APP VULNERABLE (app/)
+        run: |
+          echo "⚠️  DEPLOYMENT VULNERABLE - app/"
+          echo ""
+          echo "Escaneos en modo REPORT ONLY (no bloquean):"
+          echo "  ✅ Semgrep - completado"
+          echo "  ✅ Gitleaks - completado"
+          echo "  ✅ Trivy - completado"
+          echo ""
+          echo "🚀 DEPLOYMENT completado"
+
+      - name: 📊 Resumen Final
+        run: |
+          echo "✅ Pipeline completado"
+          echo ""
+          echo "⚠️  VULNERABILIDADES DETECTADAS (pero no bloqueadas):"
+          echo "   ❌ SQL Injection en /login"
+          echo "   ❌ XSS en /search"
+          echo "   ❌ IDOR en /order"
+          echo ""
+          echo "ℹ️  Los escaneos se ejecutaron en MODO REPORT ONLY"
